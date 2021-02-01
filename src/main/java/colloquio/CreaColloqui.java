@@ -24,6 +24,7 @@ public class CreaColloqui {
 	
 	public CreaColloqui() {
 		//gio vedere come mettere in resources senza path assoluto
+		//gio vedere come passare la mail utente
 		this.pathFile = "C:\\Users\\GIOVANNI\\Desktop\\pagina_colloqui.html";
 		this.durataMinuti = 9;
 		this.dateFormatGiornoOra = new SimpleDateFormat("dd/MM/yyyy hh:mm");
@@ -52,6 +53,7 @@ public class CreaColloqui {
 		}
 	}
 	
+	//Trasforma un oggetto Date in una stringa in formato ISO
 	public String parseDate(Date date) {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
 		sdf.setTimeZone(TimeZone.getTimeZone("CET"));
@@ -59,6 +61,7 @@ public class CreaColloqui {
 		return sdf.format(date);
 	}
 
+	//Popola l'array dei colloqui
 	public void parseColloqui(String dataColloquioStr) throws Exception {
 		File input = new File(this.pathFile);
 		Document doc = Jsoup.parse(input, "UTF-8");
@@ -82,23 +85,20 @@ public class CreaColloqui {
 	    }
 	}
 	
+	//Ritorna la data e l'ora di inzio del colloquio
 	public Date getDataOraColloquio(String s1, String s2) throws ParseException {
 		String data = getDataColloquio(s1);
 		String ora = getOraInizioColloquio(s2);
 		
 		return this.dateFormatGiornoOra.parse(data + " " + ora);
 	}
-	
-	/*
-     Ritorna una stringa data a partire dalla cella della tabella
-    */
+
+    //Ritorna una stringa data a partire dalla cella della tabella
 	public String getDataColloquio(String dataora) throws ParseException {
 		return dataora.split("\\s+")[0];
 	}
 
-    /*
-     Ritorna una stringa ora compresa tra 'asintotico a' e ')' dalla cella della tabella
-    */
+    //Ritorna una stringa ora compresa tra 'asintotico a' e ')' dalla cella della tabella
 	public String getOraInizioColloquio(String oraCollquio) {
 		return StringUtils.substringBetween(oraCollquio, "\u2243", ")");
 	}
