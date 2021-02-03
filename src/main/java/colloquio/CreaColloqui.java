@@ -24,7 +24,7 @@ public class CreaColloqui {
 	public String calendarId;
 	
 	public CreaColloqui() {
-		this.inputFile = "src/main/resources/{NOMEFILE}";
+		this.inputFile = "src/main/resources/{NOMEFILE}";//in NOMEFILE deve esserci anche l'estensione .html
 		this.durataMinuti = 9;
 		this.colloqui = new ArrayList<Colloquio>();
 		this.calendarId = "{MAIL}";
