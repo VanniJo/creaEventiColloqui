@@ -31,7 +31,7 @@ import java.util.List;
 import java.util.Random;
 
 public class EventoUtils {
-    private final String APPLICATION_NAME = "Google Calendar API Java Quickstart";
+    private final String APPLICATION_NAME = "Crea Colloqui in Calendar";
     private final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
     private final String TOKENS_DIRECTORY_PATH = "tokens";
 

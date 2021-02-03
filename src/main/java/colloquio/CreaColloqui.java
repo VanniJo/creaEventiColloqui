@@ -1,7 +1,9 @@
 package colloquio;
 
+import java.io.BufferedReader;
 import java.io.File;
-import java.text.DateFormat;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -17,20 +19,15 @@ import org.jsoup.select.Elements;
 
 public class CreaColloqui {
 	public ArrayList<Colloquio> colloqui;
-	public String pathFile = "";
+	public String inputFile = "";
 	public int durataMinuti;
-	public DateFormat dateFormatGiornoOra, dateFormatGiorno;
 	public String calendarId;
 	
 	public CreaColloqui() {
-		//gio vedere come mettere in resources senza path assoluto
-		//gio vedere come passare la mail utente
-		this.pathFile = "C:\\Users\\GIOVANNI\\Desktop\\pagina_colloqui.html";
+		this.inputFile = "src/main/resources/{NOMEFILE}";
 		this.durataMinuti = 9;
-		this.dateFormatGiornoOra = new SimpleDateFormat("dd/MM/yyyy hh:mm");
-		this.dateFormatGiorno = new SimpleDateFormat("dd/MM/yyyy");
 		this.colloqui = new ArrayList<Colloquio>();
-		this.calendarId = "jojotheprof@gmail.com";
+		this.calendarId = "{MAIL}";
 	}
 
 	/*
@@ -42,15 +39,24 @@ public class CreaColloqui {
 		
 		//popolo l'array dei colloqui
 		creaColloqui.parseColloqui(args[0]);
+
+        if(creaColloqui.colloqui.isEmpty()) {
+        	System.out.println("Non ci sono colloqui per la data " + args[0]);
+        }
+        else {
+        	if(creaColloqui.getSN("Vuoi creare i colloqui trovati? S/N")) {
+        		for(Colloquio colloquio : creaColloqui.colloqui) {
+        			//Creo il colloquio con data inizio/fine calcolate con la durata configurata
+        			String confirm = eventoUtils.creaEvento("Colloquio " + colloquio.getAlunno(),
+        												    creaColloqui.parseDate(colloquio.getDataOra()),
+        												    creaColloqui.parseDate(DateUtils.addMinutes(colloquio.getDataOra(), creaColloqui.durataMinuti)),
+        												    creaColloqui.calendarId);
+        			System.out.println(confirm);
+        		}
+        	}
+        }
 		
-		for(Colloquio colloquio : creaColloqui.colloqui) {
-			//Creo il colloquio con data inizio/fine calcolate con la durata configurata
-			String confirm = eventoUtils.creaEvento("Colloquio " + colloquio.getAlunno(),
-												    creaColloqui.parseDate(colloquio.getDataOra()),
-												    creaColloqui.parseDate(DateUtils.addMinutes(colloquio.getDataOra(), creaColloqui.durataMinuti)),
-												    creaColloqui.calendarId);
-			System.out.println(confirm);
-		}
+        System.out.println("**FINE PROGRAMMA**");
 	}
 	
 	//Trasforma un oggetto Date in una stringa in formato ISO
@@ -63,11 +69,11 @@ public class CreaColloqui {
 
 	//Popola l'array dei colloqui
 	public void parseColloqui(String dataColloquioStr) throws Exception {
-		File input = new File(this.pathFile);
+		File input = new File(this.inputFile);
 		Document doc = Jsoup.parse(input, "UTF-8");
 	    Element table = doc.select("table").get(0); //prima tabella della pagina
 	    Elements rows = table.select("tr");
-	    Date dataColloquio = this.dateFormatGiorno.parse(dataColloquioStr);
+	    Date dataColloquio = new SimpleDateFormat("dd/MM/yyyy").parse(dataColloquioStr);
 
 	    //Scorro le righe a partire dalla seconda
 	    for (int i=1; i<rows.size(); i++) {
@@ -90,7 +96,7 @@ public class CreaColloqui {
 		String data = getDataColloquio(s1);
 		String ora = getOraInizioColloquio(s2);
 		
-		return this.dateFormatGiornoOra.parse(data + " " + ora);
+		return new SimpleDateFormat("dd/MM/yyyy hh:mm").parse(data + " " + ora);
 	}
 
     //Ritorna una stringa data a partire dalla cella della tabella
@@ -102,4 +108,31 @@ public class CreaColloqui {
 	public String getOraInizioColloquio(String oraCollquio) {
 		return StringUtils.substringBetween(oraCollquio, "\u2243", ")");
 	}
+	
+	public boolean getSN(String s) throws IOException {
+		String risposta;
+		
+		do {
+			risposta = getString(s).toUpperCase();
+		}
+		while(!risposta.equals("S") && 
+		      !risposta.equals("N"));
+		
+		if(risposta.equals("S")) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+
+	public String getString(String s) throws IOException {
+		InputStreamReader input = new InputStreamReader(System.in);
+	    BufferedReader tastiera = new BufferedReader(input);
+		
+	    System.out.println(s);
+
+		return tastiera.readLine();
+	}
+
 }
