@@ -2,7 +2,7 @@
 Crea tutti gli eventi Google Calendar di un determinato giorno, relativamente alle prenotazioni che i genitori effettuano sul registro Axios (Vallauri)
 Come procedere:
 
-	-Creare un progetto Java Maven utilizzando il file pom.xml ed installare tutte le libreri
+	-Creare un progetto Java Maven utilizzando il file pom.xml ed installare tutte le librerie
 	
 	-Creare un progetto sulla console del servizio Google Cloud Platform relativo all'account a cui si vogliono aggiungere gli eventi
 	https://console.cloud.google.com
